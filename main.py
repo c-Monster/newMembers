@@ -5,6 +5,8 @@ import json
 import tools
 import recordRequest
 
+def test():
+    print "test called"
 
 username = raw_input('LDS Username:')
 password = raw_input('LDS Password:')
@@ -28,7 +30,6 @@ headers = {
         'accept':'application/json, text/plain, */*', 
         'accept-encoding':'gzip, dseflate, br',
         'accept-language':'en-US,en;q=0.8',
-        'content-length':'71',
         'content-type':'application/json;charset=UTF-8',
         'origin':'https://www.lds.org',
         'referer':'https://www.lds.org/mls/mbr/records/request/find-member',
@@ -48,15 +49,15 @@ except (ValueError, KeyError, TypeError):
 
 #build request body with apt number
 request = recordRequest.buildRequestBody(response.text, '188')
-print request
-print json.dumps(request)
 
-#pullResponse = session.put(url = pullAddress, data = json.dumps(request), cookies = credentials, headers = headers)
-#
-#print pullResponse.status_code
-#
-#try:
-#    decoded2 = json.loads(pullResponse.text)
-#
-#except (ValueError, KeyError, TypeError):
-#    print "Error parsing JSON response"
+#this is new
+headers['dnt'] = '1'
+pullResponse = session.put(url = pullAddress, data = json.dumps(request), cookies = credentials, headers = headers)
+
+print pullResponse.status_code
+
+try:
+    decoded2 = json.loads(pullResponse.text)
+
+except (ValueError, KeyError, TypeError):
+    print "Error parsing JSON response"

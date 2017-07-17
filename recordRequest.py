@@ -1,4 +1,5 @@
 import json
+import copy
 
 def buildRequestBody(text, apt):
 
@@ -22,11 +23,13 @@ def buildRequestBody(text, apt):
             'ysa': True,
             }
 
-#TODO be neater about literals
+    head = copy.deepcopy(member)
+    head['isMoving'] = True
+
     address = {
-            'city': 'Provo',
+            'city': "Provo",
             'country': 251,
-            'formattedLines': json.dumps(["1565 N University Ave", "Apt 188", "Provo, Utah 84604-2631"]),
+            'formattedLines': ["1565 N University Ave", "Apt 188", "Provo, Utah 84604-2631"],
             'geocodeToUnits': False,
             'postalCode': '84604-2631',
             'state': 44,
@@ -34,50 +37,55 @@ def buildRequestBody(text, apt):
             'street2': 'Apt ' + apt,
             }
 
-    address['standardized'] = json.dumps(address)
+    standardized = copy.deepcopy(address)
+    standardized['standardized'] = address
 
 
     residential = {
-            'address': json.dumps(address),
-            'selection': 'suggested',
+            'address': standardized,
+            'selection': "suggested"
             }
     
     unitAddressConfig = {
-            'addressFields': json.dumps(['country', 'street1', 'street2', 'city', 'state', 'postalCode']),
-            'countries': json.dumps({
+            'addressFields': ['country', 'street1', 'street2', 'city', 'state', 'postalCode'],
+            'countries': {
                 'United States': 251
-                }),
+                },
             'defaultCountry': 251,
             'defaultState': 44,
-            'geoCodeEnabled': True,
-            'states': json.dumps({ 
-                251: json.dumps({
+            'geocodeEnabled': True,
+            'states': { 
+                251: {
                     'Utah': 44
-                    })
-                })
+                    }
+                }
             }
 
 
+    emptyAddress = {
+            'formattedLines': [],
+            'geocodeToUnits': False,
+            }
 
     body = {
             'bypassStandardized': True,
-            'confirmStandardized': json.dumps(residential),
+            'confirmStandardized': residential,
             'contactPriorLeader': False,
-            'defaultNewHoh': json.dumps(member),
+            'defaultNewHoh': member,
             'email': decoded['singleResultMoveHousehold']['email'],
             'entireHouseholdMoving': True, #TODO compare head and individual MRNs to see if the entire household moves or not
-            'formattedMrnsToMove': [decoded['results'][0]['formattedMrn']], #TODO figure out how to initialize a list here 
-            'head': json.dumps(member),
-            'individual': json.dumps(member),
+            'formattedMrnsToMove': [decoded['results'][0]['formattedMrn']],
+            'head': head,
+            'individual': member,
             'joiningExistingHousehold': False,
-  #          'mailingAddress': #TODO can I just leave this blank?
+            'mailingAddress': emptyAddress, 
             'mailingIsDifferent': False,
             'mrnsToMove': [decoded['results'][0]['mrn']],
             'newHohMrn': decoded['results'][0]['mrn'],
             'phone':decoded['singleResultMoveHousehold']['phone'],
             'promptStandardized': True,
-            'residentialAddress': json.dumps(residential),#TODO see if we can null 'standardized'
-            'unitAddressConfig': json.dumps(unitAddressConfig),
+            'residentialAddress': address,
+            'unitAddressConfig': unitAddressConfig,
             'errors': {},
             'members': [],
             }
