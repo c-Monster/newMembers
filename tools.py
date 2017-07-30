@@ -1,3 +1,4 @@
+#TODO refactor this so we only need a username and password?
 def login(session, username, password):
 
     meta = session.get('https://ident.lds.org/sso/UI/Login?service=credentials')

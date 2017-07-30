@@ -5,8 +5,6 @@ import json
 import tools
 import recordRequest
 
-def test():
-    print "test called"
 
 username = raw_input('LDS Username:')
 password = raw_input('LDS Password:')
