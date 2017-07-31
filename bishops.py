@@ -16,17 +16,14 @@ HEADERS = {
 #data will be a string of MRNs delineated by whitespace
 def getFormerBishopInfo(session, credentials):
     
-    #mrnList = data.split(" ")
-    output = "changeMe"
+    output = ""
 
     for line in sys.stdin:
 
-        print(line)
-        data = line.split(', ')
+        data = line.rstrip().split(', ')
         memberName = data[0]
-        print memberName
         mrn = data[1]
-        print mrn
+        print "Finding former bishop and email of %s" % memberName
 
         session = requests.session()
         credentials = tools.login(session, username, password)
@@ -53,6 +50,7 @@ def getFormerBishopInfo(session, credentials):
             
         except(ValueError, KeyError, TypeError):
             print "Error parsing json response to unit request"
+            continue
         
         print decoded['leaderName']
         print decoded['leaderEmail']
@@ -60,7 +58,6 @@ def getFormerBishopInfo(session, credentials):
         
         result = ', '.join([memberName, decoded['leaderName'], decoded['leaderEmail'], '\n'])
         output = output + result
-        print output
 
     return output
 
@@ -68,7 +65,6 @@ def getFormerBishopInfo(session, credentials):
 
 username = sys.argv[1]
 password = sys.argv[2]
-#data = sys.stdin.read()
 
 session = requests.session()
 credentials = tools.login(session, username, password)
