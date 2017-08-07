@@ -10,21 +10,8 @@ def buildRequestBody(text, apt):
         print "Could not parse JSON response"
 
 
-    #TODO see if we can grab individual's info straight out of decoded?
-    member = { #same as individual in this case
-            'age': decoded['singleResultMoveHousehold']['individual']['age'],
-            'birthDate': decoded['singleResultMoveHousehold']['individual']['birthDate'],
-            'gender': decoded['singleResultMoveHousehold']['individual']['gender'],
-            'hqMoveRestricted': decoded['singleResultMoveHousehold']['individual']['hqMoveRestricted'],
-            'id': decoded['singleResultMoveHousehold']['individual']['id'],
-            'moveRestricted':decoded['singleResultMoveHousehold']['individual']['moveRestricted'],
-            #TODO standardize where grab MRN from?
-            'mrn': decoded['results'][0]['mrn'],
-            'name': decoded['singleResultMoveHousehold']['individual']['name'],
-            'oouMember': decoded['singleResultMoveHousehold']['individual']['oouMember'],
-            'secured': decoded['singleResultMoveHousehold']['individual']['secured'],
-            'ysa': True,
-            }
+    member = decoded['singleResultMoveHousehold']['individual']
+    member['ysa'] = True
 
     #figure out if member is head of household or not
     if decoded['results'][0]['hohMrn'] == decoded['results'][0]['mrn']:
