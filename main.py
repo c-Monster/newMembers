@@ -4,16 +4,18 @@ import requests
 import json
 import tools
 import recordRequest
+import sys
 
 
-username = raw_input('LDS Username:')
-password = raw_input('LDS Password:')
+username = sys.argv[1]
+password = sys.argv[2]
 
 session = requests.session()
 credentials = tools.login(session, username, password)
 
-name = raw_input('Name of member:')
-birthday = raw_input('Birthday of member (YYYYMMDD):')
+name = raw_input('Name of member: ')
+birthday = raw_input('Birthday of member (YYYYMMDD): ')
+apartment = raw_input('Apartment number: ')
 
 payload = {
         'mrnOrName':name,
@@ -46,7 +48,9 @@ except (ValueError, KeyError, TypeError):
 
 
 #build request body with apt number
-request = recordRequest.buildRequestBody(response.text, '188')
+request = recordRequest.buildRequestBody(response.text, apartment)
+print request['individual']['mrn']
+print request['individual']['name']
 
 #this is new
 headers['dnt'] = '1'

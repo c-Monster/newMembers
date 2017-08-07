@@ -9,6 +9,8 @@ def buildRequestBody(text, apt):
     except (ValueError, KeyError, TypeError):
         print "Could not parse JSON response"
 
+
+    #TODO see if we can grab individual's info straight out of decoded?
     member = { #same as individual in this case
             'age': decoded['singleResultMoveHousehold']['individual']['age'],
             'birthDate': decoded['singleResultMoveHousehold']['individual']['birthDate'],
@@ -16,6 +18,7 @@ def buildRequestBody(text, apt):
             'hqMoveRestricted': decoded['singleResultMoveHousehold']['individual']['hqMoveRestricted'],
             'id': decoded['singleResultMoveHousehold']['individual']['id'],
             'moveRestricted':decoded['singleResultMoveHousehold']['individual']['moveRestricted'],
+            #TODO standardize where grab MRN from?
             'mrn': decoded['results'][0]['mrn'],
             'name': decoded['singleResultMoveHousehold']['individual']['name'],
             'oouMember': decoded['singleResultMoveHousehold']['individual']['oouMember'],
@@ -23,8 +26,18 @@ def buildRequestBody(text, apt):
             'ysa': True,
             }
 
-    head = copy.deepcopy(member)
-    head['isMoving'] = True
+    #figure out if member is head of household or not
+    if decoded['results'][0]['hohMrn'] == decoded['results'][0]['mrn']:
+        #not head of household
+        head = decoded['singleResultMoveHousehold']['head']
+        spouse = decoded['singleResultMoveHousehold']['spouse']
+        entireHouseholdMoving = False
+    else:
+        #head of household
+        head = copy.deepcopy(member)
+        head['isMoving'] = True
+        entireHouseholdMoving = True
+        spouse = None
 
     address = {
             'city': "Provo",
@@ -73,9 +86,11 @@ def buildRequestBody(text, apt):
             'contactPriorLeader': False,
             'defaultNewHoh': member,
             'email': decoded['singleResultMoveHousehold']['email'],
-            'entireHouseholdMoving': True, #TODO compare head and individual MRNs to see if the entire household moves or not
+            'entireHouseholdMoving': entireHouseholdMoving,
             'formattedMrnsToMove': [decoded['results'][0]['formattedMrn']],
             'head': head,
+            'spouse': spouse,
+            'members': [],
             'individual': member,
             'joiningExistingHousehold': False,
             'mailingAddress': emptyAddress, 
@@ -87,7 +102,6 @@ def buildRequestBody(text, apt):
             'residentialAddress': address,
             'unitAddressConfig': unitAddressConfig,
             'errors': {},
-            'members': [],
             }
             
     return body
