@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+import requests
+import json
+import tools
+import record_request
+import sys
+
+def pull_records(name, birthday, apartment, credentials, debug):
+
+    if debug == "true":
+        debug == True
+    else:
+        debug == False
+        
+    if debug: print "Pulling records for %s" % name
+
+    payload = {
+            'mrnOrName':name,
+            'name':name,
+            'birthDate':birthday
+            }
+    
+    RECORDS_ADDRESS = 'https://www.lds.org/mls/mbr/services/records/request/find-member?lang=eng'
+    PULL_ADDRESS = 'https://www.lds.org/mls/mbr/services/records/request/move-household?lang=eng'
+
+    headers = {
+            'accept':'application/json, text/plain, */*',
+            'content-type':'application/json;charset=UTF-8',
+            }
+    response = session.post(url = RECORDS_ADDRESS, data = json.dumps(payload), cookies = credentials, headers = headers)
+    if debug: print response.status_code
+    assert (response.status_code == 200)
+
+    decoded = json.loads(response.text)
+    mrn = decoded['singleResultMoveHousehold']['individual']['mrn']
+    name = decoded['singleResultMoveHousehold']['individual']['name']
+
+    if debug: 
+        print decoded['singleResultMoveHousehold']['individual']['mrn']
+        print decoded['singleResultMoveHousehold']['individual']['name']
+
+    request = record_request.buildRequestBody(response.text, apartment)
+    response = session.put(url = PULL_ADDRESS, data = json.dumps(request), cookies = credentials, headers = headers)
+    if debug: print response.status_code
+    assert (response.status_code == 200)
+
+    return ', '.join([mrn, name, '\n'])
+
+    
+
+username = sys.argv[1]
+password = sys.argv[2]
+debug = sys.argv[3]
+
+
+session = requests.session()
+credentials = tools.login(session, username, password)
+
+output = ""
+
+for line in sys.stdin:
+
+    data = line.rstrip().split(', ')
+    name = data[0]
+    birthday = data[1]
+    apartment = data[2]
+
+    try:
+        result = pull_records(name, birthday, apartment, credentials, debug)
+
+    except(AssertionError, ValueError, KeyError, TypeError):
+        #append a message notifying the error
+        result = ', '.join([name, 'error', '\n'])
+        
+    output = output + result
+
+sys.stdout.write(output)
