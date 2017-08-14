@@ -45,7 +45,7 @@ def pull_records(name, birthday, apartment, credentials, debug):
     if debug: print response.status_code
     assert (response.status_code == 200)
 
-    return ', '.join([mrn, name, '\n'])
+    return ', '.join([name, mrn, '\n'])
 
     
 
