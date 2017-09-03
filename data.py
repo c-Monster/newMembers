@@ -239,7 +239,7 @@ def build_bishop_row(member):
             index = member['row']
 
             for n, i in enumerate(row):
-                if n == PULLED:
+                if n == BISHOP:
                     row[n] = member['error']
 
         except KeyError:

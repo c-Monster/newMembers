@@ -40,7 +40,6 @@ def main():
     
         try:
             result = records.pull(member, credentials, session)
-
             mrns.append(result)
             cprint('\tsuccess!', 'green')
             
@@ -49,11 +48,13 @@ def main():
                     'error': 'non-200 response',
                     'row': member['row']
                     }
+            cprint('\terror', 'red', attrs = ['bold'])
         except (ValueError, KeyError, TypeError):
             result = {
                     'error': 'unable to parse JSON',
                     'row': member['row']
                     }
+            cprint('\terror', 'red', attrs = ['bold'])
 
         row = data.build_pulled_row(result)
         data.update_row(row, result['row'])
@@ -71,12 +72,14 @@ def main():
                     'error': 'non-200 response',
                     'row': member['row']
                     }
+            cprint('\terror', 'red', attrs = ['bold'])
 
         except (ValueError, KeyError, TypeError):
             result = {
                     'error': 'unable to parse JSON',
                     'row': member['row']
                     }
+            cprint('\terror', 'red', attrs = ['bold'])
             
         row = data.build_bishop_row(result)
         data.update_row(row, result['row'])

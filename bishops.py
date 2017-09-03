@@ -15,17 +15,22 @@ HEADERS = {
         'accept':'application/json, text/plain, */*',
         }
 
+MAX = 11
+
 def fetch(member, credentials, session):
     
     name = member['name']
     mrn = member['mrn']
+
+    if len(mrn) > MAX:
+        mrn = mrn[len(mrn)-MAX:]
     
     print "\tfinding former bishop and email of %s..." % colored(name, 'yellow')
     
             
     address = PROFILE_ADDRESS % {'mrn': mrn}
     response = session.get(url = address, cookies = credentials, headers = HEADERS)
-    print response.status_code
+    print '\tresponse code: ', response.status_code
    
     assert response.status_code == 200
     decoded = json.loads(response.text)
