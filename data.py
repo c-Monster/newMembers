@@ -177,8 +177,8 @@ def parse_birthday(birthday):
 
     output += fields[0]
 
-    if len(fields[1]) == 0:
-        output += '1'
+    if len(fields[1]) == 1:
+        output += '0'
 
     output += fields[1]
 

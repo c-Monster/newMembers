@@ -46,13 +46,13 @@ def main():
         except AssertionError:
             result = {
                     'error': 'non-200 response',
-                    'row': member['row']
+                    'row': member['id']
                     }
             cprint('\terror', 'red', attrs = ['bold'])
         except (ValueError, KeyError, TypeError):
             result = {
                     'error': 'unable to parse JSON',
-                    'row': member['row']
+                    'row': member['id']
                     }
             cprint('\terror', 'red', attrs = ['bold'])
 
@@ -61,11 +61,13 @@ def main():
     
     cprint('\tFetching former bishops...', 'cyan')
 
+    count = 0
     for member in mrns:
 
         try: 
             result = bishops.fetch(member, credentials, session)
             cprint('\tsuccess!', 'green')
+            count += 1
 
         except AssertionError:
             result = {
@@ -84,6 +86,11 @@ def main():
         row = data.build_bishop_row(result)
         data.update_row(row, result['row'])
     
+
+    msg = 'moved %d records' % len(mrns)
+    cprint(msg, 'green', attrs = ['bold'])
+    msg = 'found %d bishops' % count
+    cprint(msg, 'green', attrs = ['bold'])
 
 if __name__ == '__main__':
     main()
