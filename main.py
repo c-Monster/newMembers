@@ -5,6 +5,7 @@ import json
 import requests
 
 from termcolor import colored, cprint
+import getpass
 
 import data
 import tools
@@ -27,8 +28,8 @@ def main():
 
     cprint('\tPulling records...', 'cyan')
 
-    username = raw_input('\tLDS Username: ')
-    password = raw_input('\tLDS Password: ')
+    username = raw_input(colored('\tLDS Username: ', 'yellow'))
+    password = getpass.getpass(colored('\tLDS Password: ', 'yellow'))
 
     decoded = json.loads(members)
 
