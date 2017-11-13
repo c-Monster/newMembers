@@ -105,6 +105,9 @@ def set_columns(values):
         elif cell == 'Phone Number':
             global PHONE
             PHONE = i
+        elif cell == 'Email Address':
+            global PERSONAL_EMAIL
+            PERSONAL_EMAIL = i
         elif cell == 'Records Pulled':
             global PULLED
             PULLED = i
@@ -147,6 +150,7 @@ def parse_data(values):
                 'birthday': parse_birthday(row[DOB]),
                 'apartment': row[APT],
                 'phone': row[PHONE],
+                'email': row[PERSONAL_EMAIL],
                 'id': i
                     }
 

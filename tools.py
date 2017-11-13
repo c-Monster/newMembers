@@ -35,7 +35,7 @@ def login(session, username, password):
 
 
 #builds POST body used to move records
-def build_request_body(text, apt, phone):
+def build_request_body(text, apt, phone, email):
 
     try:
         decoded = json.loads(text)
@@ -106,7 +106,7 @@ def build_request_body(text, apt, phone):
             'confirmStandardized': residential,
             'contactPriorLeader': False,
             'defaultNewHoh': member,
-            'email': decoded['singleResultMoveHousehold']['email'],
+            'email': email,
             'entireHouseholdMoving': entireHouseholdMoving,
             'formattedMrnsToMove': [decoded['results'][0]['formattedMrn']],
             'head': head,
