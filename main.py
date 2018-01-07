@@ -26,7 +26,7 @@ def main():
     cprint('\tFetching data from Google Sheets...', 'cyan')
 
     try: #prep the google sheets data
-        service = data.build_service
+        service = data.build_service()
         values = data.get_data(service)
         data.set_columns(values) 
 
@@ -68,7 +68,7 @@ def main():
             bishopCount += 1
 
         except AssertionError:
-            cprint("\tformer bishop not found", 'red', attrs = ['bold']
+            cprint("\tformer bishop not found", 'red', attrs = ['bold'])
             member.bishop = individual.Bishop('error', 'error')
             bishopCount -= 1
 
