@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import individual
+
 import httplib2
 import os
 import json
@@ -9,6 +11,7 @@ from oauth2client import client
 from oauth2client import tools
 from oauth2client.file import Storage
 from termcolor import cprint
+
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets'
 SECRET = 'records_auth.json'
@@ -70,9 +73,7 @@ def build_service():
     return service
 
 #gets a dump of what's in Google Sheets
-def get_data():
-
-    service = build_service()
+def get_data(service):
 
     result = service.spreadsheets().values().get(spreadsheetId = SHEET_ID, range = RANGE).execute()
 
@@ -96,9 +97,15 @@ def set_columns(values):
         elif cell == 'Last Name':
             global LAST
             LAST = i
-        elif cell == 'Birthday':
-            global DOB
-            DOB = i
+        elif cell == 'Birth Month':
+            global BMONTH 
+            BMONTH = i
+        elif cell == 'Birth Day':
+            global BDAY
+            BDAY = i
+        elif cell == 'Birth Year':
+            global BYEAR
+            BYEAR = i
         elif cell == 'Apartment':
             global APT
             APT = i
@@ -120,57 +127,12 @@ def set_columns(values):
         elif cell == 'Former Bishop Email':
             global EMAIL
             EMAIL = i
+        elif cell == 'Gender':
+            global GENDER
+            GENDER = i
         else:
             continue
 
-    
-#returns a JSON object full of records to be pulled
-#assumes values is a list of lists
-def parse_data(values):
-
-    set_columns(values) 
-    
-    output = []
-    for i, row in enumerate(values):
-
-        if i == 0 or len(row) == 0:
-            continue
-        
-        try: 
-            if row[PULLED] == 'done':
-                continue
-        except IndexError:
-            #do nothing... why does line 131 raise this exception?
-            print '\t\t[identified record to pull]'
-
-        try:
-            name = "%s %s" % (row[FIRST], row[LAST])
-            member = {
-                'name': name,
-                'birthday': parse_birthday(row[DOB]),
-                'apartment': row[APT],
-                'phone': row[PHONE],
-                'email': row[PERSONAL_EMAIL],
-                'id': i
-                    }
-
-            output.append(member)
-
-        except IndexError:
-            msg = '\tError buidling member object: index out of range in row %d' % i
-
-            cprint(msg, 'red', attrs = ['bold'])
-            member = {
-                    'error': msg,
-                    'id': i
-                    }
-            #TODO make an error appear in the sheet
-
-    return json.dumps(output)
-
-
-
-#no input validation because Google takes care of that for us :)
 def parse_birthday(birthday):
 
     fields = birthday.split('/')
@@ -267,39 +229,4 @@ def update_row(row, index):
             'values': values
             }
     service.spreadsheets().values().update(spreadsheetId = SHEET_ID, range = range_name, body = body, valueInputOption = 'RAW').execute() 
-
-
-
-#this is an example
-def ex():
-
-    service = build_service()
-
-    range_name = 'New Members 2017!B2:C4'
-
-    result = service.spreadsheets().values().get(spreadsheetId=SHEET_ID, range = range_name).execute()
-
-    values = result.get('values', [])
-
-    if not values:
-        print 'no data found'
-    else:
-        print range_name
-        for row in values:
-            print row[0], row[1]
-
-    values = [
-            ['c', 'Monster'],
-            ['e', 'Monster']
-            ]
-
-    body = {
-            'majorDimension': 'ROWS',
-            'values': values
-            }
-
-    result = service.spreadsheets().values().update(spreadsheetId=SHEET_ID, range = range_name, valueInputOption='RAW', body=body).execute()
-
-
-    
 
