@@ -48,7 +48,9 @@ def main():
             continue
         
         try:
-            member = individual.Individual(i, row[FIRST], row[LAST], row[BMONTH], row[BDAY], row[BYEAR], row[PHONE], row[PERSONAL_EMAIL], row[APT], row[GENDER])
+            member = individual.Individual(i, row[data.FIRST], row[data.LAST],
+                    row[data.BMONTH], row[data.BDAY], row[data.BYEAR], row[data.PHONE],
+                    row[data.PERSONAL_EMAIL], row[data.APT], row[data.GENDER])
 
         except IndexError: # bad data
             msg = '\tError building object: invalid data in row %d' % i 
@@ -64,7 +66,7 @@ def main():
             recordCount -= 1
 
         try:
-            member.find_bishop(credentials, session)
+            member.fetch_former_bishop(credentials, session)
             bishopCount += 1
 
         except AssertionError:

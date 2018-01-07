@@ -179,7 +179,6 @@ class Individual:
             
         #search for potential record
         print '\tsearching for record...'
-        print payload
         response = session.post(url = self.RECORDS_ADDRESS, data = json.dumps(payload), cookies = credentials, headers = headers)
         print response
     
