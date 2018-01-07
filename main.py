@@ -69,7 +69,7 @@ def main():
             member.fetch_former_bishop(credentials, session)
             bishopCount += 1
 
-        except AssertionError:
+        except AssertionError, AttributeError:
             cprint("\tformer bishop not found", 'red', attrs = ['bold'])
             member.bishop = individual.Bishop('error', 'error')
             bishopCount -= 1

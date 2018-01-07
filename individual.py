@@ -4,6 +4,7 @@ import copy
 import json
 import requests
 import tools
+import data
 from termcolor import colored, cprint
 
 class Birthday:
@@ -58,7 +59,7 @@ class Individual:
     HEADERS = {
             'accept':'application/json, text/plain, */*',
             }
-    MAX = 11
+    MAX_MRN = 11
 
     #object is initialized with basic attributes
     def __init__(self, ID, firstName, lastName, birthMonth, birthDay, birthYear, phone, email, apartment, gender):
@@ -180,7 +181,6 @@ class Individual:
         #search for potential record
         print '\tsearching for record...'
         response = session.post(url = self.RECORDS_ADDRESS, data = json.dumps(payload), cookies = credentials, headers = headers)
-        print response
     
         print '\tresponse code: ', colored(response.status_code, 'yellow')
         assert (response.status_code == 200)
@@ -196,11 +196,18 @@ class Individual:
         print '\tresponse code: ', colored(response.status_code, 'yellow')
         assert (response.status_code == 200)
         self.pulled = 'done'
+        
+        cprint('\tsucess!', 'green')
 
     def fetch_former_bishop(self, credentials, session):
 
-        if len(self.mrn) > MAX_MRN: #groom mrn
-           self.mrn = self.mrn[len(self.mrn)-MAX:]
+        try:
+            if len(self.mrn) > self.MAX_MRN: #groom mrn
+               self.mrn = self.mrn[len(self.mrn)-MAX_MRN:]
+    
+        except AttributeError:
+            cprint('\tmissing MRN', 'red')
+            return
 
         print "\tfinding former bishop of %s...", colored(self.name, 'yellow')
         address = PROFILE_ADDRESS % {'mrn': self.mrn}
@@ -224,7 +231,7 @@ class Individual:
          
     def update_sheet(self, service):
 
-        service = build_service()
+        service = data.build_service()
         index = self.id + 1
         range_name = 'New Members 2017!%d%d' % (index, index)
 
