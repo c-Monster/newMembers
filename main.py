@@ -28,7 +28,7 @@ def main():
     try: #prep the google sheets data
         service = data.build_service()
         values = data.get_data(service)
-        data.set_columns(values) 
+        indices = data.set_columns(values) 
 
     except ValueError:
         cprint('unable to retrieve data', 'red', attrs = ['bold'])
@@ -47,15 +47,14 @@ def main():
         if i == 0 or len(row) == 0:
             continue
         
-        try:
-            member = individual.Individual(i, row[data.FIRST], row[data.LAST],
-                    row[data.BMONTH], row[data.BDAY], row[data.BYEAR], row[data.PHONE],
-                    row[data.PERSONAL_EMAIL], row[data.APT], row[data.GENDER])
+#        try:
+        member = individual.Individual(i, row, indices)
 
-        except IndexError: # bad data
-            msg = '\tError building object: invalid data in row %d' % i 
-            cprint(msg, 'red',  attrs = ['bold'])
-
+#        except IndexError: # bad data
+#            msg = '\tError building object: invalid data in row %d' % i 
+#            cprint(msg, 'red',  attrs = ['bold'])
+#            continue
+#
         try:
             member.pullRecords(credentials, session)
             recordCount += 1

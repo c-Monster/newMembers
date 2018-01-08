@@ -85,53 +85,41 @@ def get_data(service):
         return values
 
 #values is a list of lists
+#returns a map of column names to row indices
 def set_columns(values):
-
-    global LENGTH
-    LENGTH = len(values[0])
+    output = {}
 
     for i, cell in enumerate(values[0]):
         if cell == 'First Name':
-            global FIRST
-            FIRST = i
+            output[cell] = i
         elif cell == 'Last Name':
-            global LAST
-            LAST = i
+            output[cell] = i
         elif cell == 'Birth Month':
-            global BMONTH 
-            BMONTH = i
+            output[cell] = i
         elif cell == 'Birth Day':
-            global BDAY
-            BDAY = i
+            output[cell] = i
         elif cell == 'Birth Year':
-            global BYEAR
-            BYEAR = i
+            output[cell] = i
         elif cell == 'Apartment':
-            global APT
-            APT = i
+            output[cell] = i
         elif cell == 'Phone Number':
-            global PHONE
-            PHONE = i
+            output[cell] = i
         elif cell == 'Email Address':
-            global PERSONAL_EMAIL
-            PERSONAL_EMAIL = i
+            output[cell] = i
         elif cell == 'Records Pulled':
-            global PULLED
-            PULLED = i
+            output[cell] = i
         elif cell == 'MRN':
-            global MRN
-            MRN = i
+            output[cell] = i
         elif cell == 'Former Bishop':
-            global BISHOP
-            BISHOP = i
+            output[cell] = i
         elif cell == 'Former Bishop Email':
-            global EMAIL
-            EMAIL = i
+            output[cell] = i
         elif cell == 'Gender':
-            global GENDER
-            GENDER = i
+            output[cell] = i
         else:
             continue
+
+    return output
 
 def parse_birthday(birthday):
 

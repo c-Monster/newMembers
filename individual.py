@@ -60,15 +60,60 @@ class Individual:
             'accept':'application/json, text/plain, */*',
             }
     MAX_MRN = 11
+    LENGTH = 15
 
     #object is initialized with basic attributes
-    def __init__(self, ID, firstName, lastName, birthMonth, birthDay, birthYear, phone, email, apartment, gender):
-        self.ID = ID
-        self.Name = Name(firstName, lastName)
+    #def __init__(self, ID, firstName, lastName, birthMonth, birthDay, birthYear, phone, email, apartment, gender):
+    def __init__(self, ID, row, indices):
+ 
+        print indices
+        #if these don't get set, we want to throw an exception
+        self.id = ID
+
+        firstName = row[indices['First Name']]
+        lastName = row[indices['Last Name']]
+        self.Name = Name(firstName, lastName)#set name
+        print firstName, lastName
+
+        birthDay = row[indices['Birth Day']]
+        birthMonth = row[indices['Birth Month']]
+        birthYear = row[indices['Birth Year']]
         self.Birthday = Birthday(birthDay, birthMonth, birthYear)
-        self.phone = phone
-        self.email = email
-        self.apartment = apartment
+        print birthDay, birthMonth, birthYear
+
+        self.Gender = row[indices['Gender']]
+        print self.Gender
+
+        self.phone = row[indices['Phone Number']]
+
+
+        self.email = row[indices['Email Address']]
+
+                
+        self.apartment = row[indices['Apartment']]
+
+
+        try:
+            self.records_pulled = row[indices['Records Pulled']]
+
+        except IndexError:
+            self.records_pulled = 'not done'
+
+        try:
+            self.mrn = row[indices['MRN']]
+
+        except IndexError:
+            self.mrn = ''
+
+        try:
+            bishopName = row[indices['Former Bishop']]
+            bishopEmail = row[indices['Former Bishop Email']]
+            self.bishop = Bishop(bishopName, bishopEmail)
+
+        except IndexError:
+            self.bishop = Bishop('','')
+
+        pass
 
     def buildRecordRequestBody(self, searchResult):
 
@@ -203,15 +248,15 @@ class Individual:
 
         try:
             if len(self.mrn) > self.MAX_MRN: #groom mrn
-               self.mrn = self.mrn[len(self.mrn)-MAX_MRN:]
+               self.mrn = self.mrn[len(self.mrn)-self.MAX_MRN:]
     
         except AttributeError:
             cprint('\tmissing MRN', 'red')
             return
 
-        print "\tfinding former bishop of %s...", colored(self.name, 'yellow')
-        address = PROFILE_ADDRESS % {'mrn': self.mrn}
-        response = session.get(url = address, cookies = credentials, headers = HEADERS)
+        print "\tfinding former bishop of ", colored(self.Name.toString(), 'yellow')
+        address = self.PROFILE_ADDRESS % {'mrn': self.mrn}
+        response = session.get(url = address, cookies = credentials, headers = self.HEADERS)
         print '\tresponse code: ', response.status_code
         assert response.status_code == 200
 
@@ -223,7 +268,7 @@ class Individual:
         print '\tmost recent unit: ', colored(decoded['individual']['priorUnits'][0]['unitName'], 'yellow')
                 
         address = UNIT_ADDRESS % {'unit': decoded['individual']['priorUnits'][0]['unitNumber']}
-        response = session.get(url = address, cookies = credentials, headers = HEADERS)
+        response = session.get(url = address, cookies = credentials, headers = self.HEADERS)
         assert response.status_code == 200
                 
         decoded = json.loads(response.text)
@@ -236,17 +281,17 @@ class Individual:
         range_name = 'New Members 2017!%d%d' % (index, index)
 
         row = []
-        for i in range(LENGTH):
+        for i in range(self.LENGTH):
             row.append(None)
 
         for n, i in enumerate(row):
-            if n == MRN:
+            if n == data.MRN:
                 row[n] = self.mrn
-            elif n == PULLED:
+            elif n == data.PULLED:
                 row[n] = self.pulled
-            elif n == BISHOP:
+            elif n == data.BISHOP:
                 row[n] = self.Bishop.Name.toString()
-            elif n == EMAIL:
+            elif n == data.EMAIL:
                 row[n] = self.Bishop.email
 
 
