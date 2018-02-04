@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import sys
 import json
@@ -25,13 +25,11 @@ def main():
         cprint('Error: no data in spreadsheet!', 'red', attrs = ['bold'])
 
     members = data.parse_data(values) 
+    decoded = json.loads(members)
 
     cprint('\tPulling records...', 'cyan')
-
     username = raw_input(colored('\tLDS Username: ', 'yellow'))
     password = getpass.getpass(colored('\tLDS Password: ', 'yellow'))
-
-    decoded = json.loads(members)
 
     session = requests.session()
     credentials = tools.login(session, username, password)
