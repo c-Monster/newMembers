@@ -1,10 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import sys
 import json
 import requests
 
 from termcolor import colored, cprint
+import getpass
 
 import data
 import tools
@@ -24,13 +25,11 @@ def main():
         cprint('Error: no data in spreadsheet!', 'red', attrs = ['bold'])
 
     members = data.parse_data(values) 
+    decoded = json.loads(members)
 
     cprint('\tPulling records...', 'cyan')
-
-    username = raw_input('\tLDS Username: ')
-    password = raw_input('\tLDS Password: ')
-
-    decoded = json.loads(members)
+    username = raw_input(colored('\tLDS Username: ', 'yellow'))
+    password = getpass.getpass(colored('\tLDS Password: ', 'yellow'))
 
     session = requests.session()
     credentials = tools.login(session, username, password)

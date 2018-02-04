@@ -26,6 +26,9 @@ MRN = -1
 BISHOP = -1
 EMAIL = -1
 CONTACTED = -1
+BIRTH_DAY = -1
+BIRTH_MONTH = -1
+BIRTH_YEAR = -1
 
 LENGTH = -1
 
@@ -96,15 +99,24 @@ def set_columns(values):
         elif cell == 'Last Name':
             global LAST
             LAST = i
-        elif cell == 'Birthday':
-            global DOB
-            DOB = i
+        elif cell == 'Birth Month':
+            global BIRTH_MONTH
+            BIRTH_MONTH = i
+        elif cell == 'Birth Day':
+            global BIRTH_DAY
+            BIRTH_DAY = i
+        elif cell == 'Birth Year':
+            global BIRTH_YEAR
+            BIRTH_YEAR = i
         elif cell == 'Apartment':
             global APT
             APT = i
         elif cell == 'Phone Number':
             global PHONE
             PHONE = i
+        elif cell == 'Email Address':
+            global PERSONAL_EMAIL
+            PERSONAL_EMAIL = i
         elif cell == 'Records Pulled':
             global PULLED
             PULLED = i
@@ -136,24 +148,24 @@ def parse_data(values):
         try: 
             if row[PULLED] == 'done':
                 continue
-        except IndexError:
-            #do nothing... why does line 131 raise this exception?
+        except IndexError:#row[PULLED] comes back as null
             print '\t\t[identified record to pull]'
 
         try:
             name = "%s %s" % (row[FIRST], row[LAST])
             member = {
                 'name': name,
-                'birthday': parse_birthday(row[DOB]),
+                'birthday': parse_birthday(row[BIRTH_DAY], row[BIRTH_MONTH], row[BIRTH_YEAR]),
                 'apartment': row[APT],
                 'phone': row[PHONE],
+                'email': row[PERSONAL_EMAIL],
                 'id': i
                     }
 
             output.append(member)
 
         except IndexError:
-            msg = '\tError buidling member object: index out of range in row %d' % i
+            msg = '\tError building member object: index out of range in row %d' % i
 
             cprint(msg, 'red', attrs = ['bold'])
             member = {
@@ -166,21 +178,40 @@ def parse_data(values):
 
 
 
-#no input validation because Google takes care of that for us :)
-def parse_birthday(birthday):
+def parse_birthday(day, month, year):
 
-    fields = birthday.split('/')
-    output = fields[2]#year
+    output = year
    
-    if len(fields[0]) == 1: 
+    if month == 'January':
+        output += '01'
+    elif month == 'February':
+        output += '02'
+    elif month == 'March':
+        output += '03'
+    elif month == 'April':
+        output += '04'
+    elif month == 'May':
+        output += '05'
+    elif month == 'June':
+        output += '06'
+    elif month == 'July':
+        output += '07'
+    elif month == 'August':
+        output += '08'
+    elif month == 'September':
+        output += '09'
+    elif month == 'October':
+        output += '10'
+    elif month == 'November':
+        output += '11'
+    elif month == 'December':
+        output += '12'
+
+
+    if len(day) == 1:
         output += '0'
 
-    output += fields[0]
-
-    if len(fields[1]) == 1:
-        output += '0'
-
-    output += fields[1]
+    output += day
 
     return output
 
