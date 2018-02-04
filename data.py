@@ -26,6 +26,9 @@ MRN = -1
 BISHOP = -1
 EMAIL = -1
 CONTACTED = -1
+BIRTH_DAY = -1
+BIRTH_MONTH = -1
+BIRTH_YEAR = -1
 
 LENGTH = -1
 
@@ -104,7 +107,7 @@ def set_columns(values):
             BIRTH_DAY = i
         elif cell == 'Birth Year':
             global BIRTH_YEAR
-            cell == i
+            BIRTH_YEAR = i
         elif cell == 'Apartment':
             global APT
             APT = i
@@ -204,7 +207,6 @@ def parse_birthday(day, month, year):
     elif month == 'December':
         output += '12'
 
-    output += month
 
     if len(day) == 1:
         output += '0'
